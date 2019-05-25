@@ -23,7 +23,7 @@ public class HelixAudioClipLooper {
 
     public static void main(String[] args) {
 
-        JPanel topForm = new JPanel(new GridLayout(2,2));
+        JPanel topForm = new JPanel(new GridLayout(2, 2));
         List<MidiDevice.Info> allMidiInterfaces = getMidiInterfaces();
         JComboBox<Object> midiInterfaces = new JComboBox<>(allMidiInterfaces.toArray());
         topForm.add(midiInterfaces);
@@ -57,7 +57,7 @@ public class HelixAudioClipLooper {
         JFrame frame = new JFrame();
         frame.setContentPane(panel);
         frame.setResizable(false);
-        frame.setSize(300,300);
+        frame.setSize(300, 300);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setTitle("Helix Audio Clip Looper");
         frame.setVisible(true);
@@ -107,19 +107,21 @@ public class HelixAudioClipLooper {
         try {
             MidiDevice midiDevice = MidiSystem.getMidiDevice(info);
             return midiDevice.getMaxReceivers() != 0;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
     private static boolean isOutputDevice(Mixer.Info info) {
         try {
+            if (info.getName().startsWith("Port")) {
+                return false;
+            }
             Mixer mixer = AudioSystem.getMixer(info);
             Line.Info[] sourceLineInfo = mixer.getSourceLineInfo();
+
             return sourceLineInfo.length != 0;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
