@@ -11,6 +11,8 @@ To use, follow these steps:
 
 This program has not been tested on Windows or Linux- let me know if you use it and/or have issues!
 
+The HELIX looper does seem to be a bit sketchy- you cane easily crash the whole device by sending it too many commands, and sometimes it randomly ignores messages (which obviously screws this app up!)
+
 Audio Device Routing
 ====================
 
