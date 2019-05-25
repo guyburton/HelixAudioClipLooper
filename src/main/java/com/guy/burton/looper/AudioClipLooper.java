@@ -35,19 +35,22 @@ public class AudioClipLooper {
             sourceDataLine.start();
             System.out.println("Starting loop");
             looperController.record();
-            byte[] buffer = new byte[sourceDataLine.getBufferSize()];
-            while (!cancelled) {
-                int bytesRead = audioInputStream.read(buffer, 0, buffer.length);
-                if (bytesRead <= 0)
-                    break;
-                sourceDataLine.write(buffer, 0, bytesRead);
-                Thread.yield();
-            }
+
+            byte[] data = new byte[(int) (audioInputStream.getFrameLength() * audioInputStream.getFormat().getFrameSize())];
+            int read = audioInputStream.read(data);
+
+            int frameSize = audioInputStream.getFormat().getFrameSize();
             audioInputStream.close();
+            int written = 0;
+            while (!cancelled && read > written) {
+                written += sourceDataLine.write(data, written, Math.min(read - written, frameSize * 128));
+                while(sourceDataLine.getBufferSize() - sourceDataLine.available() > 3000)
+                    Thread.yield();
+            }
             if (!cancelled) {
-                sourceDataLine.drain();
                 System.out.println("Ending loop");
                 looperController.play();
+                sourceDataLine.drain();
             }
 
         } catch (Exception e) {
